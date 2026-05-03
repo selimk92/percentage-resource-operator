@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "operator.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "operator.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "operator.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "operator.name" . }}
+        {{- include "operator.labels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "operator.serviceAccountName" . }}
+      containers:
+      - name: manager
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command: ["/manager"]
+        env:
+        - name: ENABLE_WEBHOOKS
+          value: {{ .Values.webhook.enabled | quote }}
+        ports:
+        - containerPort: 9443
+          name: webhook
+        - containerPort: 8081
+          name: health
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        {{- if .Values.webhook.enabled }}
+        volumeMounts:
+        - name: webhook-cert
+          mountPath: /tmp/k8s-webhook-server/serving-certs
+          readOnly: true
+        {{- end }}
+      {{- if .Values.webhook.enabled }}
+      volumes:
+      - name: webhook-cert
+        secret:
+          secretName: {{ include "operator.name" . }}-webhook-cert
+      {{- end }}

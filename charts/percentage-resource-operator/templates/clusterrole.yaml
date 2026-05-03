@@ -1,0 +1,19 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "operator.name" . }}-manager-role
+  labels:
+    {{- include "operator.labels" . | nindent 4 }}
+rules:
+- apiGroups: [""]
+  resources: [nodes]
+  verbs: [get, list, watch]
+- apiGroups: [""]
+  resources: [pods]
+  verbs: [get, list, watch, update, patch, delete]
+- apiGroups: [policy.percentagepolicy.io]
+  resources: [percentageresourcepolicies]
+  verbs: [get, list, watch, create, update, patch, delete]
+- apiGroups: [policy.percentagepolicy.io]
+  resources: [percentageresourcepolicies/status, percentageresourcepolicies/finalizers]
+  verbs: [get, update, patch]

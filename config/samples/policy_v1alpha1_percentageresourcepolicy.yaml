@@ -1,0 +1,24 @@
+apiVersion: policy.percentagepolicy.io/v1alpha1
+kind: PercentageResourcePolicy
+metadata:
+  name: example-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: my-app
+  resources:
+    memory:
+      percentage: 20
+      fallback: "512Mi"
+      min: "256Mi"
+      max: "8Gi"
+    cpu:
+      percentage: 30
+      fallback: "500m"
+      min: "100m"
+      max: "4"
+  updateStrategy:
+    type: OnRestart
+    updateThreshold: "10%"
+    debounce: "30s"

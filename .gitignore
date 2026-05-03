@@ -1,0 +1,16 @@
+# binaries
+bin/
+*.tar.gz
+*.tar.gz.1
+,1
+
+# go
+vendor/
+
+# editor
+.idea/
+.vscode/
+
+# test artifacts
+/tmp/
+cover.out

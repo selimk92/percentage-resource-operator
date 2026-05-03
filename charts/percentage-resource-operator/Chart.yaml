@@ -1,0 +1,15 @@
+apiVersion: v2
+name: percentage-resource-operator
+description: Kubernetes operator for percentage-based pod resource limits
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - kubernetes
+  - operator
+  - resource-management
+home: https://github.com/selimk92/percentage-resource-operator
+sources:
+  - https://github.com/selimk92/percentage-resource-operator
+maintainers:
+  - name: selimk92
